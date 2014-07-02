@@ -2,9 +2,7 @@
 //  MainViewController.m
 //  Pure Guitar Tuner
 //
-//  Created by Taylor Franklin on 12/30/13.
-//  Copyright (c) 2013 Taylor Franklin. All rights reserved.
-//
+
 
 #import "MainViewController.h"
 #import "FlipsideViewController.h"
@@ -20,6 +18,8 @@
     UIButton *m_toggleButton;
     FBKVOController *_KVOController;
     NSString *lastFreq;
+    UIButton *insideButton;
+    UIButton *outsideButton;
 }
 
 - (UIStatusBarStyle)preferredStatusBarStyle
@@ -30,7 +30,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = rgb(36, 42, 50);
+    self.view.backgroundColor = rgb(50, 50, 50);
     
     count = 0;
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
@@ -49,22 +49,25 @@
     self.knobControl.tintColor = [UIColor colorWithRed:0.237 green:0.504 blue:1.000 alpha:1.000];
     [self.knobControl setValue:0.004 animated:NO];
     
-    _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, currentFrame.size.height/1.33, currentFrame.size.width, currentFrame.size.height/4)];
-    _scrollView.contentSize = CGSizeMake(currentFrame.size.width * 4, currentFrame.size.height/4);
-    _scrollView.backgroundColor = [UIColor lightGrayColor];
-    _scrollView.pagingEnabled = YES;
-    _scrollView.showsHorizontalScrollIndicator = NO;
-    [self.view addSubview:_scrollView];
+    // init buttonView
+    _isInside = TRUE;
     
-    int i = 0;
-    while (i <= 3)
-    {
-        UIView *views = [[UIView alloc] initWithFrame:CGRectMake(((_scrollView.frame.size.width)*i)+20, 10, (_scrollView.frame.size.width)-40, _scrollView.frame.size.height-20)];
-        views.backgroundColor=[UIColor yellowColor];
-        [views setTag:i];
-        [_scrollView addSubview:views];
-        i++;
-    }
+    _buttonView = [[UIView alloc] initWithFrame:CGRectMake(0, currentFrame.size.height/1.33, currentFrame.size.width, currentFrame.size.height/4)];
+    _buttonView.backgroundColor = [UIColor lightGrayColor];
+    [self.view addSubview:_buttonView];
+    
+    insideButton = [[UIButton alloc] initWithFrame:CGRectMake(10, 10, _buttonView.frame.size.width/2 - 20, _buttonView.frame.size.height - 20)];
+    insideButton.backgroundColor=[UIColor redColor];
+    [insideButton setTitle:@"内弦 D-1" forState:UIControlStateNormal];
+    [insideButton addTarget:self action:@selector(insideButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [_buttonView addSubview:insideButton];
+    
+    
+    outsideButton = [[UIButton alloc] initWithFrame:CGRectMake(_buttonView.frame.size.width/2 + 10,10, _buttonView.frame.size.width/2 - 20, _buttonView.frame.size.height - 20)];
+    outsideButton.backgroundColor=[UIColor blackColor];
+    [outsideButton setTitle:@"外弦 D-5" forState:UIControlStateNormal];
+    [outsideButton addTarget:self action:@selector(outsideButtonClicked:) forControlEvents:UIControlEventTouchUpInside];
+    [_buttonView addSubview:outsideButton];
     
     m_toggleButton = [UIButton buttonWithType:UIButtonTypeInfoLight];
     CGRect buttonRect = m_toggleButton.frame;
@@ -187,6 +190,32 @@
 - (void)dealloc
 {
     [self.pitchDetector TurnOffMicrophone];
+}
+
+-(void)insideButtonClicked:(UIButton *)sender {
+    
+    UIButton *tappedButton = sender;
+    
+    [tappedButton setBackgroundColor:[UIColor redColor]];
+    
+    [outsideButton setBackgroundColor:[UIColor blackColor]];
+    
+    _isInside = TRUE;
+    
+    NSLog(@"Inside selected");
+}
+
+-(void)outsideButtonClicked:(UIButton *)sender {
+    
+    UIButton *tappedButton = sender;
+    
+    [tappedButton setBackgroundColor:[UIColor greenColor]];
+    
+    [insideButton setBackgroundColor:[UIColor blackColor]];
+    
+    _isInside = FALSE;
+    
+    NSLog(@"Outside selected");
 }
 
 @end

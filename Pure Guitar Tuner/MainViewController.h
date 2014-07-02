@@ -19,6 +19,10 @@
 @property (strong, nonatomic) UIView *knobPlaceholder;
 @property (strong, nonatomic) GTNote *noteData;
 
+//@property (nonatomic, strong) UIButton *insideButton;
+//@property (nonatomic, strong) UIButton *outsideButton;
+@property (nonatomic, strong) UIView *buttonView;
+
 
 @property (nonatomic, strong) UILabel *noteDisplay;
 @property (nonatomic, retain) UILabel *freqencyDisplay;
@@ -26,10 +30,16 @@
 @property (nonatomic, strong) NSString *currentNote;
 @property(assign) BOOL isListening;
 
+@property (assign) BOOL isInside;
+
 @property (nonatomic, strong) PitchDetector *pitchDetector;
 
 - (void)updateFrequencyLabel;
 
 - (void)updateToFrequncy:(double)freqency;
+
+- (void)insideButtonClicked:(UIButton *)sender;
+
+- (void)outsideButtonClicked:(UIButton *)sender;
 
 @end
